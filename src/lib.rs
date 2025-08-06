@@ -251,26 +251,3 @@ mod tests {
         assert_eq!(read_all(input).unwrap(), "12,34\nasdf");
     }
 }
-impl ScpiSerialize for f32 {
-    fn serialize(&self, out: &mut String) {
-        todo!()
-    }
-}
-
-impl ScpiSerialize for u8 {
-    fn serialize(&self, out: &mut String) {
-        todo!()
-    }
-}
-
-impl ScpiSerialize for u16 {
-    fn serialize(&self, out: &mut String) {
-        todo!()
-    }
-}
-
-impl ScpiDeserialize for u32 {
-    fn deserialize(input: &mut &str) -> Result<Self> {
-        todo!()
-    }
-}
