@@ -3,8 +3,12 @@
 use std::str::pattern::{Pattern, Searcher};
 use thiserror::Error;
 
+pub mod primitives;
+
 #[derive(Error, Debug)]
 pub enum Error {
+    // TODO build more errors for decoding of values (string to f32 conversion)
+    //  and unexpected symbols
     #[error("Received data does not match expected format: {0}")]
     ResponseDecoding(String),
 }
@@ -19,6 +23,9 @@ pub trait ScpiDeserialize
 where
     Self: Sized,
 {
+    // TODO maybe this should have an associated type so the implementer
+    // can choose the error type.
+
     fn deserialize(input: &mut &str) -> Result<Self>;
 }
 
@@ -41,18 +48,6 @@ impl<T: ScpiSerialize> ScpiSerialize for Option<T> {
 /// The communication driver will not attempt to receive a
 /// response for an associated request.
 pub struct EmptyResponse;
-
-// TODO This may not necessarily be universal,
-// that is some device could encode a u16 in say hex instead of decimal.
-impl ScpiDeserialize for u16 {
-    fn deserialize(input: &mut &str) -> crate::Result<Self> {
-        let digits = read_while(input, char::is_numeric);
-        let value: u16 = digits
-            .parse()
-            .map_err(|_| Error::ResponseDecoding(format!("Number parsing failed: {digits}")))?;
-        Ok(value)
-    }
-}
 
 #[macro_export]
 macro_rules! impl_scpi_serialize {
