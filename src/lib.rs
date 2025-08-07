@@ -18,6 +18,12 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub trait ScpiSerialize {
     fn serialize(&self, out: &mut String);
+
+    fn serialize_to_string(&self) -> String {
+        let mut out = String::new();
+        self.serialize(&mut out);
+        out
+    }
 }
 
 pub trait ScpiDeserialize
@@ -28,6 +34,12 @@ where
     // can choose the error type.
 
     fn deserialize(input: &mut &str) -> Result<Self>;
+
+    fn deserialize_complete(mut input: &str) -> Result<Self> {
+        let result = Self::deserialize(&mut input)?;
+        check_empty(input).unwrap();
+        Ok(result)
+    }
 }
 
 pub trait ScpiRequest: ScpiSerialize {
@@ -37,6 +49,7 @@ pub trait ScpiRequest: ScpiSerialize {
     type Response;
 }
 
+// TODO remove? is thits truly universal?
 impl<T: ScpiSerialize> ScpiSerialize for Option<T> {
     fn serialize(&self, out: &mut String) {
         if let Some(inner) = self {
