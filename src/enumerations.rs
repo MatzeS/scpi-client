@@ -39,3 +39,27 @@ macro_rules! scpi_enum {
         }
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{ScpiDeserialize, ScpiSerialize};
+
+    scpi_enum!(
+        #[derive(Debug, PartialEq, Eq)]
+        enum Color {
+            RED => "RED",
+            BLUE => "BLAU",
+            GREEN => "VERT"
+        }
+    );
+
+    #[test]
+    fn serialize() {
+        assert_eq!(Color::RED.serialize_to_string(), "RED");
+    }
+
+    #[test]
+    fn deserialize() {
+        assert_eq!(Color::deserialize_complete("RED").unwrap(), Color::RED);
+    }
+}
