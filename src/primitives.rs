@@ -90,62 +90,56 @@ impl_deserialize_with_parse_from_regex!(f64, REGEX_FLOATING_POINT);
 
 #[cfg(test)]
 mod tests {
-
-    macro_rules! serialize {
-        ($input:expr) => {{
-            use crate::ScpiSerialize;
-            let mut out = String::new();
-            $input.serialize(&mut out);
-            out
-        }};
-    }
-
-    macro_rules! deserialize {
-        ($input:expr, $type:ty) => {{
-            use crate::{ScpiDeserialize, check_empty};
-            let mut data: &str = $input;
-            let result: $type = ScpiDeserialize::deserialize(&mut data).unwrap();
-            check_empty(data).unwrap();
-            result
-        }};
-    }
+    use crate::{ScpiDeserialize, ScpiSerialize};
 
     #[test]
     fn serialize_primitives() {
-        assert_eq!(serialize!(123u8), "123");
-        assert_eq!(serialize!(1234u16), "1234");
-        assert_eq!(serialize!(123456u32), "123456");
-        assert_eq!(serialize!(123456789u64), "123456789");
-        assert_eq!(serialize!(1234567890u128), "1234567890");
+        assert_eq!(123u8.serialize_to_string(), "123");
+        assert_eq!(1234u16.serialize_to_string(), "1234");
+        assert_eq!(123456u32.serialize_to_string(), "123456");
+        assert_eq!(123456789u64.serialize_to_string(), "123456789");
+        assert_eq!(1234567890u128.serialize_to_string(), "1234567890");
 
-        assert_eq!(serialize!(-123i8), "-123");
-        assert_eq!(serialize!(-1234i16), "-1234");
-        assert_eq!(serialize!(-123456i32), "-123456");
-        assert_eq!(serialize!(-123456789i64), "-123456789");
-        assert_eq!(serialize!(-1234567890i128), "-1234567890");
+        assert_eq!((-123i8).serialize_to_string(), "-123");
+        assert_eq!((-1234i16).serialize_to_string(), "-1234");
+        assert_eq!((-123456i32).serialize_to_string(), "-123456");
+        assert_eq!((-123456789i64).serialize_to_string(), "-123456789");
+        assert_eq!((-1234567890i128).serialize_to_string(), "-1234567890");
 
-        assert_eq!(serialize!(123i8), "123");
+        assert_eq!(123i8.serialize_to_string(), "123");
 
-        assert_eq!(serialize!(1.2345f32), "1.2345");
-        assert_eq!(serialize!(2e-8f32), "0.00000002");
-        assert_eq!(serialize!(-0.2e0f32), "-0.2");
+        assert_eq!((1.2345f32).serialize_to_string(), "1.2345");
+        assert_eq!((2e-8f32).serialize_to_string(), "0.00000002");
+        assert_eq!((-0.2e0f32).serialize_to_string(), "-0.2");
     }
 
     #[test]
     fn deserialize_primitives() {
-        assert_eq!(deserialize!("123", u8), 123u8);
-        assert_eq!(deserialize!("1234", u16), 1234u16);
-        assert_eq!(deserialize!("123456", u32), 123456u32);
-        assert_eq!(deserialize!("123456789", u64), 123456789u64);
-        assert_eq!(deserialize!("1234567890", u128), 1234567890u128);
-        assert_eq!(deserialize!("-123", i8), -123i8);
-        assert_eq!(deserialize!("-1234", i16), -1234i16);
-        assert_eq!(deserialize!("-123456", i32), -123456i32);
-        assert_eq!(deserialize!("-123456789", i64), -123456789i64);
-        assert_eq!(deserialize!("-1234567890", i128), -1234567890i128);
-        assert_eq!(deserialize!("123", i8), 123i8);
-        assert_eq!(deserialize!("1.2345", f32), 1.2345f32);
-        assert_eq!(deserialize!("0.00000002", f32), 2e-8f32);
-        assert_eq!(deserialize!("-0.2", f64), -0.2e0f64);
+        assert_eq!(u8::deserialize_complete("123").unwrap(), 123u8);
+        assert_eq!(u16::deserialize_complete("1234").unwrap(), 1234u16);
+        assert_eq!(u32::deserialize_complete("123456").unwrap(), 123456u32);
+        assert_eq!(
+            u64::deserialize_complete("123456789").unwrap(),
+            123456789u64
+        );
+        assert_eq!(
+            u128::deserialize_complete("1234567890").unwrap(),
+            1234567890u128
+        );
+        assert_eq!(i8::deserialize_complete("-123").unwrap(), -123i8);
+        assert_eq!(i16::deserialize_complete("-1234").unwrap(), -1234i16);
+        assert_eq!(i32::deserialize_complete("-123456").unwrap(), -123456i32);
+        assert_eq!(
+            i64::deserialize_complete("-123456789").unwrap(),
+            -123456789i64
+        );
+        assert_eq!(
+            i128::deserialize_complete("-1234567890").unwrap(),
+            -1234567890i128
+        );
+        assert_eq!(i8::deserialize_complete("123").unwrap(), 123i8);
+        assert_eq!(f32::deserialize_complete("1.2345").unwrap(), 1.2345f32);
+        assert_eq!(f32::deserialize_complete("0.00000002").unwrap(), 2e-8f32);
+        assert_eq!(f64::deserialize_complete("-0.2").unwrap(), -0.2e0f64);
     }
 }
