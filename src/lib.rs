@@ -173,8 +173,8 @@ mod tests {
 
     #[test]
     fn test_check_empty() {
-        assert!(check_empty(&mut "").is_ok());
-        assert!(check_empty(&mut "x").is_err());
+        assert!(check_empty("").is_ok());
+        assert!(check_empty("x").is_err());
     }
 
     #[test]

@@ -47,19 +47,19 @@ mod tests {
     scpi_enum!(
         #[derive(Debug, PartialEq, Eq)]
         enum Color {
-            RED => "RED",
-            BLUE => "BLAU",
-            GREEN => "VERT"
+            Red => "RED",
+            Blue => "BLAU",
+            Green => "VERT"
         }
     );
 
     #[test]
     fn serialize() {
-        assert_eq!(Color::RED.serialize_to_string(), "RED");
+        assert_eq!(Color::Red.serialize_to_string(), "RED");
     }
 
     #[test]
     fn deserialize() {
-        assert_eq!(Color::deserialize_complete("RED").unwrap(), Color::RED);
+        assert_eq!(Color::deserialize_complete("RED").unwrap(), Color::Red);
     }
 }
