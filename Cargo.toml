@@ -3,6 +3,13 @@ name = "scpi-client"
 version = "0.1.0"
 edition = "2024"
 
+description = "Helper library for serializing and deserializing SCPI messages."
+repository = "https://github.com/MatzeS/scpi-client"
+license = "MIT OR Apache-2.0"
+
+keywords = ["scpi"]
+categories = []
+
 [dependencies]
 lazy_static = "1.5.0"
 regex = "1.11.1"
