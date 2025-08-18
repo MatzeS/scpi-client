@@ -65,11 +65,11 @@ pub struct EmptyResponse;
 
 #[macro_export]
 macro_rules! impl_scpi_serialize {
-    ($type:ty, [ $( $part:tt ),* $(,)? ]) => {
+    ($type:ty, [ $( $part:tt $(as $converter:ty)? ),* $(,)? ]) => {
         impl $crate::ScpiSerialize for $type {
             fn serialize(&self, out: &mut String) {
                 $(
-                    impl_scpi_serialize!(@part self, out, $part);
+                    impl_scpi_serialize!(@part self, out, $part $(as $converter)*);
                 )*
             }
         }
@@ -85,6 +85,10 @@ macro_rules! impl_scpi_serialize {
         $self.$field.serialize($out);
     };
 
+    (@part $self:ident, $out:ident, $field:ident as $converter:ty) => {
+        let convert : $converter = $self.$field.into();
+        convert.serialize($out);
+    };
 }
 
 // TODO naming is bad here with request and structs FooRequest...
