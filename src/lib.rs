@@ -85,9 +85,6 @@ macro_rules! impl_scpi_serialize {
         $self.$field.serialize($out);
     };
 
-    (@part $self:ident, $out:ident, $expr:expr) => {
-        $crate::ScpiSerialize::serialize(&$expr, $out);
-    };
 }
 
 // TODO naming is bad here with request and structs FooRequest...
