@@ -1,6 +1,4 @@
-#![feature(pattern)]
-
-use std::str::pattern::{Pattern, Searcher};
+use regex::Regex;
 use thiserror::Error;
 
 pub mod enumerations;
@@ -124,18 +122,9 @@ pub fn read_until<'a>(input: &mut &'a str, delimiter: char) -> Result<&'a str> {
     }
 }
 
-pub fn read_while<'a, P>(input: &mut &'a str, pattern: P) -> &'a str
-where
-    P: Pattern,
-{
-    let mut searcher = pattern.into_searcher(input);
-
-    let split = searcher
-        .next_reject()
-        .map(|(split, _end)| split)
-        .unwrap_or(input.len());
-
-    let (head, tail) = input.split_at(split);
+pub fn read_prefix<'a>(input: &mut &'a str, pattern: &Regex) -> &'a str {
+    let length = pattern.find(input).map_or(0, |m| m.end());
+    let (head, tail) = input.split_at(length);
     *input = tail;
     head
 }
@@ -205,11 +194,12 @@ mod tests {
     }
 
     #[test]
-    fn test_read_while() {
+    fn test_read_prefix() {
         let input = &mut "12,34";
-        assert_eq!(read_while(input, char::is_numeric), "12");
+        let pattern = regex::Regex::new("^[0-9]+").unwrap();
+        assert_eq!(read_prefix(input, &pattern), "12");
         assert!(match_literal(input, ",").is_ok());
-        assert_eq!(read_while(input, char::is_numeric), "34");
+        assert_eq!(read_prefix(input, &pattern), "34");
         assert!(check_empty(input).is_ok());
     }
 
